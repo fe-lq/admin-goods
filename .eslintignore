@@ -1,0 +1,5 @@
+node_modules/*
+.commitlintrc.ts
+tsconfig.json
+package.json
+config/tsconfig.json
