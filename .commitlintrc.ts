@@ -7,8 +7,7 @@ export default {
   // 自定义commit格式
   parserPreset: {
     parserOpts: {
-      headerPattern: /^(\w+)\[(\d{4})\]: (.*)/,
-      headerCorrespondence: ["type", "scope", "subject"],
+      headerPattern: /^(\w+)(?:\[(\d{4})\])?: (.*)$/,
     },
   },
   rules: {
@@ -21,11 +20,16 @@ export default {
         "custom-rule": (parsed: any) => {
           const { type, scope, subject } = parsed;
           const typeList = ["feat", "fix", "style", "build"];
-          if (typeList.includes(type) && (scope === null || subject === null)) {
-            return [
-              false,
-              `header must be in format 'type[scope]: subject' and scope is 4 numbers`,
-            ];
+
+          if (scope === null || subject === null) {
+            if (type === null) {
+              return [
+                false,
+                `header must be in format 'type[scope]: subject' and scope is 4 numbers`,
+              ];
+            } else if (typeList.includes(type)) {
+              return [false, `[scope] may not be empty and it's 4 numbers`];
+            }
           }
           return [true, ""];
         },
