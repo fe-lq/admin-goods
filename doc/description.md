@@ -38,8 +38,8 @@ npx husky add .husky/commit-msg
 3. @commitlint/config-conventional是一个commit规范规则，也可以在commit-msg中用shell语法自定义规则
    或者在.commitlintrc.ts中配置插件自定义规则
 4. 测试commit-msg的两种方式(不会有提交commit效果)
-   * 使用git commit -m 'xxx'验证在commit-msg最后添加`exit 1`
-   * echo 'xxx' | npx commitlint
+   - 使用git commit -m 'xxx'验证在commit-msg最后添加`exit 1`
+   - echo 'xxx' | npx commitlint
 5. 在pre-commit中配置提交commit之前的校验，一般使用lint-staged如下配置
 
 ```bash
@@ -85,7 +85,7 @@ pnpm i -D webpack webpack-dev-server webpack-cli
 {
   "compilerOptions": {
     "target": "es5",
-   //  主要配置项
+    //  主要配置项
     "module": "commonjs",
     "lib": ["ES6", "DOM"],
     "moduleResolution": "node",
@@ -93,7 +93,7 @@ pnpm i -D webpack webpack-dev-server webpack-cli
     "skipLibCheck": false,
     "strict": true,
     "baseUrl": "./"
-  },
+  }
 }
 ```
 
@@ -102,10 +102,40 @@ pnpm i -D webpack webpack-dev-server webpack-cli
 
 ```json
 {
-   "script": {
-      "start": "cross-env NODE_ENV=development TS_NODE_PROJECT='./config/tsconfig.json' webpack serve --config  ./config/webpack.dev.ts",
-   }
+  "script": {
+    "start": "cross-env NODE_ENV=development TS_NODE_PROJECT='./config/tsconfig.json' webpack serve --config  ./config/webpack.dev.ts"
+  }
 }
 ```
 
 tip: `cross-env`是为了在不同操作系统中设置环境变量
+
+使用`esbuild-loader`编译ts文件，相比`babel-loader`和`ts-loader`更快一点且有类型检查
+
+```typescript
+{
+   test: /\.[jt]sx?$/,
+   loader: "esbuild-loader",
+}
+```
+
+启用Tree Shaking时，即将在package.json中设置：
+
+```json
+{
+  "sideEffects": false
+}
+```
+
+如上操作会使如下引用样式的方式样式文件被清除，除非使用css module的形式引用样式
+
+```typescript
+/**
+ * 开启Tree Shaking
+ * "sideEffects": false时
+ */
+// 无效
+import "./style.less";
+// 有效
+import styles from "./style.module.less";
+```
