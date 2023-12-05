@@ -1,9 +1,10 @@
-import "./style.less";
-import "../styles/style.css";
+import { Button } from "antd";
+
 export default function App() {
   return (
-    <div className="bg">
-      <span className="text">hello react</span>
-    </div>
+    <>
+      <div>hello react</div>
+      <Button>按钮</Button>
+    </>
   );
 }
