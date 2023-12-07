@@ -15,7 +15,10 @@
     "outDir": "./dist/lib",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "lib": ["dom", "dom.iterable", "esnext"]
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "paths": {
+      "@": ["src"]
+    }
   },
   "include": ["./src", "global.d.ts"],
   "exclude": ["node_modules", "lib", "config"],
