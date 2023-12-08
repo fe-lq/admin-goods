@@ -1,6 +1,7 @@
 import { Root, createRoot } from "react-dom/client";
 import "../styles/base.css";
 import { RootComponent } from "./RootComponent ";
+// import { reactBridge } from "@garfish/bridge-react-v18";
 
 export const provider = () => {
   let root: Root | null = null;
@@ -24,8 +25,14 @@ export const provider = () => {
   };
 };
 
+// export const provider = reactBridge({
+//   el: "#app",
+//   rootComponent: RootComponent,
+//   errorBoundary: (e: any) => <h1>{e.message}</h1>,
+// });
+
 if (!window.__GARFISH__) {
   const container = document.getElementById("app");
   const root = createRoot(container!);
-  root.render(<RootComponent basename="/" />);
+  root.render(<RootComponent basename="/goods" />);
 }

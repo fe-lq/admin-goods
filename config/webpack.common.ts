@@ -1,5 +1,5 @@
 import * as path from "path";
-import { Configuration } from "webpack";
+import { BannerPlugin, Configuration } from "webpack";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 
 const commonConfig: Configuration = {
@@ -17,7 +17,7 @@ const commonConfig: Configuration = {
   },
   resolve: {
     alias: {
-      "@": "src",
+      "@": path.resolve(__dirname, "../src"),
     },
     extensions: [".js", ".ts", ".jsx", ".tsx"],
   },
@@ -38,6 +38,9 @@ const commonConfig: Configuration = {
   plugins: [
     new HtmlWebpackPlugin({
       template: "./index.html",
+    }),
+    new BannerPlugin({
+      banner: "Micro front-end",
     }),
   ],
 };

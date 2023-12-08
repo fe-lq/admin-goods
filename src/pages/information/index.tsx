@@ -1,5 +1,5 @@
 const GoodsInformation: React.FC = () => {
-  return <div>无页面</div>;
+  return <div>信息</div>;
 };
 
 export default GoodsInformation;

@@ -1,10 +1,10 @@
-import { Button } from "antd";
+import { Outlet } from "react-router-dom";
 
 export default function App() {
   return (
     <>
-      <div>hello react</div>
-      <Button>按钮</Button>
+      <div>商品信息</div>
+      <Outlet />
     </>
   );
 }

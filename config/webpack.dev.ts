@@ -8,9 +8,12 @@ const devConfig: Configuration = merge(commonConfig, {
   // SourceMap的模式
   devtool: "inline-source-map",
   devServer: {
-    static: "../dist",
     port: 8091,
     hot: true,
+    historyApiFallback: true,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    },
   },
 });
 

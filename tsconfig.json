@@ -4,7 +4,7 @@
     "jsxImportSource": "react",
     "module": "ESNext",
     "target": "ES5",
-    "baseUrl": "src",
+    "baseUrl": ".",
     "strict": true,
     "sourceMap": true,
     "skipLibCheck": true,
@@ -17,10 +17,10 @@
     "emitDecoratorMetadata": true,
     "lib": ["dom", "dom.iterable", "esnext"],
     "paths": {
-      "@": ["src"]
+      "@/*": ["src/*"]
     }
   },
-  "include": ["./src", "global.d.ts"],
+  "include": ["./src/**/*", "global.d.ts"],
   "exclude": ["node_modules", "lib", "config"],
   "types": ["node", "react"]
 }
