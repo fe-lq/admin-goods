@@ -25,9 +25,6 @@ devDependencies:
   '@commitlint/config-conventional':
     specifier: ^18.4.3
     version: 18.4.3
-  '@garfish/bridge-react-v18':
-    specifier: ^1.17.2
-    version: registry.npmmirror.com/@garfish/bridge-react-v18@1.17.2(react-dom@18.2.0)(react@18.2.0)
   '@types/node':
     specifier: ^20.10.0
     version: 20.10.0
@@ -184,11 +181,11 @@ packages:
     engines: {node: '>=v18'}
     dependencies:
       '@commitlint/types': 18.4.3
-      lodash.camelcase: 4.3.0
+      lodash.camelcase: registry.npmmirror.com/lodash.camelcase@4.3.0
       lodash.kebabcase: 4.1.1
       lodash.snakecase: 4.1.1
       lodash.startcase: 4.4.0
-      lodash.upperfirst: 4.3.1
+      lodash.upperfirst: registry.npmmirror.com/lodash.upperfirst@4.3.1
     dev: true
 
   /@commitlint/execute-rule@18.4.3:
@@ -3445,10 +3442,6 @@ packages:
       p-locate: 5.0.0
     dev: true
 
-  /lodash.camelcase@4.3.0:
-    resolution: {integrity: sha512-TwuEnCnxbc3rAvhf/LbG7tJUDzhqXyFnv3dtzLOPgCG/hODL7WFnsbwktkD7yUV0RrreP/l1PALq/YSg6VvjlA==}
-    dev: true
-
   /lodash.isfunction@3.0.9:
     resolution: {integrity: sha512-AirXNj15uRIMMPihnkInB4i3NHeb4iBtNg9WRWuK2o31S+ePwwNmDPaTL3o7dTJ+VXNZim7rFs4rxN4YU1oUJw==}
     dev: true
@@ -3483,10 +3476,6 @@ packages:
 
   /lodash.uniq@4.5.0:
     resolution: {integrity: sha512-xfBaXQd9ryd9dlSDvnvI0lvxfLJlYAZzXomUYzLKtUeOQvOP5piqAWuGtrhWeqaXK9hhoM/iyJc5AV+XfsX3HQ==}
-    dev: true
-
-  /lodash.upperfirst@4.3.1:
-    resolution: {integrity: sha512-sReKOYJIJf74dhJONhU4e0/shzi1trVbSWDOhKYE5XV2O+H7Sb2Dihwuc7xWxVl+DgFPyTqIN3zMfT9cq5iWDg==}
     dev: true
 
   /lodash@4.17.21:
@@ -4457,6 +4446,7 @@ packages:
       loose-envify: 1.4.0
       react: 18.2.0
       scheduler: 0.23.0
+    dev: false
 
   /react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
@@ -4467,6 +4457,7 @@ packages:
     engines: {node: '>=0.10.0'}
     dependencies:
       loose-envify: 1.4.0
+    dev: false
 
   /read-pkg-up@7.0.1:
     resolution: {integrity: sha512-zK0TB7Xd6JpCLmlLmufqykGE+/TlOePD6qKClNW7hHDKFh/J7/7gCWGR7joEQEW1bKq3a3yUZSObOoWLFQ4ohg==}
@@ -4695,6 +4686,7 @@ packages:
     resolution: {integrity: sha512-CtuThmgHNg7zIZWAXi3AsyIzA3n4xx7aNyjwC2VJldO2LMVDhFK+63xGqq6CsJH4rTAt6/M+N4GhZiDYPx9eUw==}
     dependencies:
       loose-envify: 1.4.0
+    dev: false
 
   /schema-utils@3.3.0:
     resolution: {integrity: sha512-pN/yOAvcC+5rQ5nERGuwrjLlYvLTbCibnZ1I7B1LaiAz9BRBlE9GMgE/eqV30P7aJQUf7Ddimy/RsbYO/GrVGg==}
@@ -6105,32 +6097,6 @@ packages:
     dev: true
     optional: true
 
-  registry.npmmirror.com/@garfish/bridge-react-v18@1.17.2(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-yV3dXOzrH+PzDSRHuSBmy70eIXlQM9s68LLTSwRPKexfNMuic/ybarGDkk8OSdv/HMN2sH/gOtekjUIl2dRQAw==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@garfish/bridge-react-v18/-/bridge-react-v18-1.17.2.tgz}
-    id: registry.npmmirror.com/@garfish/bridge-react-v18/1.17.2
-    name: '@garfish/bridge-react-v18'
-    version: 1.17.2
-    peerDependencies:
-      react: '=18'
-      react-dom: '=18'
-    dependencies:
-      '@garfish/utils': registry.npmmirror.com/@garfish/utils@1.17.2
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
-  registry.npmmirror.com/@garfish/utils@1.17.2:
-    resolution: {integrity: sha512-C0FDCB2ktDjv3IiqPi1uCJ0Pk+Ni6YS7Gj22rAfmQfjMw5DtCDwOMzlwrCx2sdPHGerNpFP5hJyn9w2klWmKHA==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@garfish/utils/-/utils-1.17.2.tgz}
-    name: '@garfish/utils'
-    version: 1.17.2
-    dependencies:
-      debug: registry.npmmirror.com/debug@4.3.4
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
   registry.npmmirror.com/@rc-component/color-picker@1.4.1(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-vh5EWqnsayZa/JwUznqDaPJz39jznx/YDbyBuVJntv735tKXKwEUZZb2jYEldOg+NKWZwtALjGMrNeGBmqFoEw==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@rc-component/color-picker/-/color-picker-1.4.1.tgz}
     id: registry.npmmirror.com/@rc-component/color-picker/1.4.1
@@ -6582,6 +6548,18 @@ packages:
       source-map: registry.npmmirror.com/source-map@0.6.1
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  registry.npmmirror.com/lodash.camelcase@4.3.0:
+    resolution: {integrity: sha512-TwuEnCnxbc3rAvhf/LbG7tJUDzhqXyFnv3dtzLOPgCG/hODL7WFnsbwktkD7yUV0RrreP/l1PALq/YSg6VvjlA==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/lodash.camelcase/-/lodash.camelcase-4.3.0.tgz}
+    name: lodash.camelcase
+    version: 4.3.0
+    dev: true
+
+  registry.npmmirror.com/lodash.upperfirst@4.3.1:
+    resolution: {integrity: sha512-sReKOYJIJf74dhJONhU4e0/shzi1trVbSWDOhKYE5XV2O+H7Sb2Dihwuc7xWxVl+DgFPyTqIN3zMfT9cq5iWDg==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/lodash.upperfirst/-/lodash.upperfirst-4.3.1.tgz}
+    name: lodash.upperfirst
+    version: 4.3.1
     dev: true
 
   registry.npmmirror.com/make-dir@2.1.0:

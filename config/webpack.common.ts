@@ -14,6 +14,8 @@ const commonConfig: Configuration = {
     publicPath: "/",
     // 每次build自动删除之前的编译结果
     clean: true,
+    libraryTarget: "umd",
+    globalObject: "window",
   },
   resolve: {
     alias: {
@@ -25,7 +27,9 @@ const commonConfig: Configuration = {
     rules: [
       {
         test: /\.(le|c)ss$/,
-        use: ["style-loader", "css-loader", "less-loader"],
+        exclude: /node_modules/,
+        include: /src/,
+        use: ["style-loader", "css-loader", "postcss-loader", "less-loader"],
       },
 
       {

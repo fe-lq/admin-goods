@@ -139,3 +139,41 @@ import "./style.less";
 // 有效
 import styles from "./style.module.less";
 ```
+
+### Garfish子应用构建
+
+该应用可独立运行也可根据garfish框架的基座当做子应用运行，子应用开发部署和独立开发部署一样
+只需在入口文件配置如下
+
+```typescript
+// 当做微应用运行时可使用garfish框架提供的桥接依赖@garfish/bridge-react-v18
+import { reactBridge } from "@garfish/bridge-react-v18";
+export const provider = reactBridge({
+  el: "#app",
+  rootComponent: RootComponent,
+  errorBoundary: (e: any) => <h1>{e.message}</h1>,
+});
+// OR 自定义provider导出函数
+export const provider = () => {
+  let root = null;
+  // render和destroy函数是必须要返回的
+  return {
+    render({ basename, dom, store, props }) {
+      const container = dom.querySelector('#root');
+      root = createRoot(container!);
+      (root as any).render(<RootComponent basename={basename} />);
+    },
+    destroy({ dom }) {
+      (root as any).unmount();
+    },
+  };
+};
+// 最关键的是自定义provider导出函数，要挂载到__GARFISH_EXPORTS__环境变量上
+__GARFISH_EXPORTS__.provider = provider;
+// __GARFISH__ 全局变量是由garfish框架的基座分发的，如果不是在微前端环境，可独立运行
+if (!window.__GARFISH__) {
+  const container = document.getElementById("app");
+  const root = createRoot(container!);
+  root.render(<RootComponent basename="/goods" />);
+}
+```
