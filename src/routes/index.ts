@@ -15,7 +15,7 @@ export const routerConfig: RouteType[] = [
   {
     name: "商品分类",
     path: "/category",
-    component: lazy(() => import("@/pages/information")),
+    component: lazy(() => import("@/pages/category")),
   },
 ];
 

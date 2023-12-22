@@ -111,11 +111,17 @@ pnpm i -D webpack webpack-dev-server webpack-cli
 tip: `cross-env`是为了在不同操作系统中设置环境变量
 
 使用`esbuild-loader`编译ts文件，相比`babel-loader`和`ts-loader`更快一点且有类型检查
+使用`stats`可以控制打包的日志输出，可以设置为errors-warnings
 
 ```typescript
-{
-   test: /\.[jt]sx?$/,
-   loader: "esbuild-loader",
+stats: "errors-warnings",
+module: {
+  rules: [
+    {
+      test: /\.[jt]sx?$/,
+      loader: "esbuild-loader",
+    },
+  ];
 }
 ```
 

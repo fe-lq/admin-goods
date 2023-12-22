@@ -2,6 +2,8 @@ import { ContentCard } from "@/components";
 import { Button, Form, Input, Select, Space, Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import "./style.less";
+import { EditModal } from "./components/edit-modal";
+import { useState } from "react";
 
 type FieldType = {
   goodsName?: string;
@@ -20,7 +22,17 @@ interface DataType {
   goodsSellCount: number;
 }
 
+type EditModalType = React.ComponentProps<typeof EditModal>;
+
 const GoodsInformation: React.FC = () => {
+  const [open, setOpen] = useState(false);
+  const [modalType, setModalType] = useState<EditModalType["modalType"]>("add");
+
+  const handleSave = (values: any) => {
+    console.log("Received values of form: ", values);
+    setOpen(false);
+  };
+
   const columns: ColumnsType<DataType> = [
     {
       title: "名称",
@@ -59,7 +71,7 @@ const GoodsInformation: React.FC = () => {
       dataIndex: "goodsDesc",
     },
     {
-      title: "Action",
+      title: "操作",
       render: () => (
         <Space>
           <Button size="small" type="primary">
@@ -158,8 +170,27 @@ const GoodsInformation: React.FC = () => {
             查询
           </Button>
         </Form.Item>
+        <Form.Item className="add-btn">
+          <Button
+            type="primary"
+            onClick={() => {
+              setModalType("add");
+              setOpen(true);
+            }}
+          >
+            新增
+          </Button>
+        </Form.Item>
       </Form>
       <Table columns={columns} dataSource={data} />
+      <EditModal
+        open={open}
+        modalType={modalType}
+        onOK={handleSave}
+        onCancel={() => {
+          setOpen(false);
+        }}
+      />
     </ContentCard>
   );
 };
