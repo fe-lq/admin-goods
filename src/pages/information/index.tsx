@@ -1,9 +1,27 @@
 import { ContentCard } from "@/components";
-import { Button, Form, Input, Select, Space, Table, Tag } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  Modal,
+  Select,
+  Space,
+  Table,
+  Tag,
+  message,
+} from "antd";
 import type { ColumnsType } from "antd/es/table";
 import "./style.less";
 import { EditModal } from "./components/edit-modal";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import {
+  createGoods,
+  deleteGoods,
+  getGoodsList,
+  updateGoods,
+} from "@/api/goods";
+import { FormGoods, Goods } from "@/types/goods";
+import { getCategoryList } from "@/api/category";
 
 type FieldType = {
   goodsName?: string;
@@ -11,29 +29,98 @@ type FieldType = {
   goodsType?: number;
 };
 
-interface DataType {
-  key: string;
-  goodsName: string;
-  goodsPrice: number;
-  goodsAmount: number;
-  goodsType: number;
-  goodsOnSale: boolean;
-  goodsDesc: string;
-  goodsSellCount: number;
-}
-
 type EditModalType = React.ComponentProps<typeof EditModal>;
 
 const GoodsInformation: React.FC = () => {
   const [open, setOpen] = useState(false);
+  const [data, setData] = useState<Goods[]>([]);
+  const [categoryOptions, setCategoryOptions] = useState<
+    { label: string; value: number }[]
+  >([]);
+  const [modalForm, setModalForm] = useState<FormGoods>();
+  const [form] = Form.useForm();
   const [modalType, setModalType] = useState<EditModalType["modalType"]>("add");
 
-  const handleSave = (values: any) => {
-    console.log("Received values of form: ", values);
-    setOpen(false);
+  const fetchData = async (params?: Goods) => {
+    const { data } = await getGoodsList(params);
+    setData(data);
   };
 
-  const columns: ColumnsType<DataType> = [
+  const fetchCategories = async () => {
+    const { data } = await getCategoryList();
+    setCategoryOptions(
+      data.map((item) => ({ label: item.typeName, value: item.id })),
+    );
+  };
+
+  useEffect(() => {
+    fetchCategories();
+    fetchData();
+  }, []);
+
+  const renderType = useCallback(
+    (typeId: number) => {
+      return categoryOptions.find((item) => item.value === typeId)?.label;
+    },
+    [categoryOptions],
+  );
+
+  const handleSave = async (values: FormGoods) => {
+    try {
+      if (modalType === "add") {
+        await createGoods(values);
+      } else {
+        await updateGoods(values);
+      }
+      message.success("保存成功");
+      fetchData();
+      setOpen(false);
+    } catch (error: any) {
+      message.error(error.message);
+    }
+  };
+
+  const handleSearch = () => {
+    const values = form.getFieldsValue();
+    fetchData(values);
+  };
+
+  const handleResetSearch = () => {
+    form.resetFields();
+    fetchData();
+  };
+
+  const handleOpenModal = (
+    modalType: EditModalType["modalType"],
+    report?: Goods,
+  ) => {
+    if (modalType === "edit") {
+      setModalForm(report);
+    } else {
+      setModalForm(undefined);
+    }
+    setModalType(modalType);
+    setOpen(true);
+  };
+
+  const handleDelete = async (id: number) => {
+    Modal.confirm({
+      title: "确认删除",
+      content: "是否确认删除该分类",
+      onOk: async () => {
+        // 删除操作
+        try {
+          await deleteGoods({ id });
+          fetchData();
+          message.success("删除成功");
+        } catch (error: any) {
+          message.error(error.message);
+        }
+      },
+    });
+  };
+
+  const columns: ColumnsType<Goods> = [
     {
       title: "名称",
       dataIndex: "goodsName",
@@ -57,6 +144,7 @@ const GoodsInformation: React.FC = () => {
     {
       title: "类型",
       dataIndex: "goodsType",
+      render: (goodsType: number) => renderType(goodsType),
     },
     {
       title: "已售数量",
@@ -72,12 +160,16 @@ const GoodsInformation: React.FC = () => {
     },
     {
       title: "操作",
-      render: () => (
+      render: (_, report) => (
         <Space>
-          <Button size="small" type="primary">
+          <Button
+            size="small"
+            type="primary"
+            onClick={() => handleOpenModal("edit", report)}
+          >
             编辑
           </Button>
-          <Button size="small" danger>
+          <Button size="small" danger onClick={() => handleDelete(report.id)}>
             删除
           </Button>
         </Space>
@@ -85,42 +177,10 @@ const GoodsInformation: React.FC = () => {
     },
   ];
 
-  const data: DataType[] = [
-    {
-      key: "1",
-      goodsName: "红玫瑰",
-      goodsPrice: 32,
-      goodsOnSale: true,
-      goodsType: 0,
-      goodsSellCount: 10,
-      goodsAmount: 100,
-      goodsDesc: "好看的",
-    },
-    {
-      key: "2",
-      goodsName: "向日葵",
-      goodsPrice: 10,
-      goodsOnSale: false,
-      goodsType: 2,
-      goodsSellCount: 3,
-      goodsAmount: 20,
-      goodsDesc: "太阳",
-    },
-    {
-      key: "3",
-      goodsName: "月季",
-      goodsPrice: 18,
-      goodsOnSale: true,
-      goodsType: 1,
-      goodsSellCount: 24,
-      goodsAmount: 50,
-      goodsDesc: "好种的",
-    },
-  ];
-
   return (
     <ContentCard>
       <Form
+        form={form}
         className="search-form"
         layout="inline"
         initialValues={{}}
@@ -146,50 +206,30 @@ const GoodsInformation: React.FC = () => {
           />
         </Form.Item>
         <Form.Item<FieldType> label="类型" name="goodsType">
-          <Select
-            placeholder="请选择类型"
-            options={[
-              {
-                label: "花1",
-                value: 0,
-              },
-              {
-                label: "花2",
-                value: 1,
-              },
-              {
-                label: "花3",
-                value: 3,
-              },
-            ]}
-          />
+          <Select placeholder="请选择类型" options={categoryOptions} />
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit">
-            查询
-          </Button>
+          <Space>
+            <Button type="primary" onClick={handleSearch}>
+              查询
+            </Button>
+            <Button onClick={handleResetSearch}>重置</Button>
+          </Space>
         </Form.Item>
         <Form.Item className="add-btn">
-          <Button
-            type="primary"
-            onClick={() => {
-              setModalType("add");
-              setOpen(true);
-            }}
-          >
+          <Button type="primary" onClick={() => handleOpenModal("add")}>
             新增
           </Button>
         </Form.Item>
       </Form>
-      <Table columns={columns} dataSource={data} />
+      <Table columns={columns} rowKey="id" dataSource={data} />
       <EditModal
         open={open}
         modalType={modalType}
+        modalForm={modalForm}
         onOK={handleSave}
-        onCancel={() => {
-          setOpen(false);
-        }}
+        onCancel={setOpen}
       />
     </ContentCard>
   );

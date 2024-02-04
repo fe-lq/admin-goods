@@ -22,6 +22,7 @@ const commonConfig: Configuration = {
     // build指定的文件夹
     path: path.resolve(__dirname, "../dist"),
     filename: "js/bundle.js",
+    globalObject: "window",
     chunkFilename: "js/[name].chunk.js",
     publicPath: "/",
     // 每次build自动删除之前的编译结果

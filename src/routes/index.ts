@@ -6,6 +6,7 @@ interface RouteType {
   component: any;
   children?: RouteType[];
 }
+
 export const routerConfig: RouteType[] = [
   {
     name: "商品信息",
