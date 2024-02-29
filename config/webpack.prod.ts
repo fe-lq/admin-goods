@@ -19,6 +19,11 @@ const prodConfig: Configuration = merge(commonConfig, {
     filename: "js/[name].[contenthash:8].js",
     chunkFilename: "js/[name].[contenthash:8].chunk.js",
     assetModuleFilename: "asset/[name].[hash][ext]",
+    /**
+     * 微应用部署需要的配置
+     */
+    libraryTarget: "umd",
+    globalObject: "window",
   },
   module: {
     rules: [

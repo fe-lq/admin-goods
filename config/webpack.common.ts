@@ -26,7 +26,7 @@ const commonConfig: Configuration = {
     chunkFilename: "js/[name].chunk.js",
     publicPath: "/",
     // 每次build自动删除之前的编译结果
-    clean: true,
+    clean: process.env.NODE_ENV === "production",
   },
   resolve: {
     alias: {
@@ -51,6 +51,7 @@ const commonConfig: Configuration = {
         // 匹配.tsx文件
         test: /\.[jt]sx?$/,
         // 匹配src文件夹
+        exclude: /node_modules/,
         include: path.resolve(__dirname, "../src"),
         // 加载esbuild-loader
         loader: "esbuild-loader",
