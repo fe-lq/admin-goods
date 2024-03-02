@@ -1,5 +1,6 @@
-import { postRequest, getRequest } from "@/request";
+import { postRequest, getRequest, http } from "@fe-lq/micro-kit";
 import { Category } from "@/types/category";
+http.defaults.baseURL = process.env.BASE_URL;
 
 export const getCategoryList = postRequest<Partial<Category>, Category[]>(
   "/category/list",

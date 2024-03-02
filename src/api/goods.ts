@@ -1,5 +1,6 @@
-import { postRequest, getRequest } from "@/request";
+import { postRequest, getRequest, http } from "@fe-lq/micro-kit";
 import { Goods } from "@/types/goods";
+http.defaults.baseURL = process.env.BASE_URL;
 
 export const getGoodsList = postRequest<
   Pick<Goods, "goodsName" | "goodsOnSale"> & { goodsType?: number },
