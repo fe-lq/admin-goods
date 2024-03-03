@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
-    "@fe-lq/micro-kit": "1.0.1-7",
+    "@fe-lq/micro-kit": "1.0.1-8",
     "antd": "^5.12.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

@@ -9,8 +9,8 @@ dependencies:
     specifier: ^5.2.6
     version: 5.3.1(react-dom@18.2.0)(react@18.2.0)
   '@fe-lq/micro-kit':
-    specifier: 1.0.1-7
-    version: 1.0.1-7
+    specifier: 1.0.1-8
+    version: 1.0.1-8
   antd:
     specifier: ^5.12.1
     version: 5.14.2(react-dom@18.2.0)(react@18.2.0)
@@ -651,8 +651,8 @@ packages:
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
 
-  /@fe-lq/micro-kit@1.0.1-7:
-    resolution: {integrity: sha512-AQ1Ngouz0/leOiyciNStZ6nzjvNUM/deFSGY3Cn0NlP/LHYwkgVzR1lLQaCQ4xnrjKL8f1S7acVY/xZeIcw/ZA==}
+  /@fe-lq/micro-kit@1.0.1-8:
+    resolution: {integrity: sha512-3U982pwFgxl7YD6RBxJy5qzDMqbBl8TKAev1NoXihCSFN911zgvo18/963+EWgKOtbJ/eVzyYF6j/3Cf/r6PxQ==}
     dependencies:
       axios: 1.6.7
       dotenv: 16.4.5
