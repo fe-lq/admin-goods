@@ -3,9 +3,13 @@ import { Goods } from "@/types/goods";
 http.defaults.baseURL = process.env.BASE_URL;
 
 export const getGoodsList = postRequest<
-  Pick<Goods, "goodsName" | "goodsOnSale"> & { goodsType?: number },
-  Goods[]
+  Goods[],
+  Pick<Goods, "goodsName" | "goodsOnSale"> & { goodsType?: number }
 >("/goods/getList");
-export const createGoods = postRequest<Partial<Goods>>("/goods/create");
-export const updateGoods = postRequest<Partial<Goods>>("/goods/update");
-export const deleteGoods = getRequest<{ id: number }>("/goods/delete");
+export const createGoods = postRequest<unknown, Partial<Goods>>(
+  "/goods/create",
+);
+export const updateGoods = postRequest<unknown, Partial<Goods>>(
+  "/goods/update",
+);
+export const deleteGoods = getRequest<unknown, { id: number }>("/goods/delete");

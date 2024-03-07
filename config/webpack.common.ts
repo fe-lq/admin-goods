@@ -24,7 +24,8 @@ const commonConfig: Configuration = {
     filename: "js/bundle.js",
     globalObject: "window",
     chunkFilename: "js/[name].chunk.js",
-    publicPath: "/",
+    publicPath:
+      process.env.NODE_ENV === "development" ? "http://localhost:8091/" : "/",
     // 每次build自动删除之前的编译结果
     clean: process.env.NODE_ENV === "production",
   },

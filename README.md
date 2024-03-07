@@ -1,7 +1,8 @@
-# 商品项目
+# 商品项目微应用
 
 该项目主要是当做微应用接入到admin系统中，也可独立部署运行
 主要使用技术栈React + TypeScript + Mobx
+依赖基座项目admin-base启动
 
 ## 环境搭建
 
@@ -23,21 +24,11 @@
   pnpm start
 ```
 
-## Tips
+## 项目打包
 
-Mac安装brew,在终端执行如下命令
-
-```bash
- ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-#  如有报错raw.githubusercontent.com 可换国内的镜像地址
-```
-
-Mac和Window都可以到node[官网](https://nodejs.org/en)下载安装包安装
-
-pnpm下载依赖慢的话可用国内的淘宝镜像
-
-```bash
- npm install -g cnpm --registry=http://registry.npmmirror.com
+```shell
+  # 项目打包
+  pnpm run build
 ```
 
 项目开发流程介绍请到`doc`文件夹下
