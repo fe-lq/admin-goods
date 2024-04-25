@@ -1,4 +1,3 @@
-import { FileImageOutlined } from "@ant-design/icons";
 import {
   Col,
   Form,
@@ -8,15 +7,12 @@ import {
   Row,
   Select,
   Switch,
-  Upload,
-  UploadFile,
-  message,
 } from "antd";
 import "./style.less";
-import { deleteFile } from "@/api/common";
 import { FormGoods } from "@/types/goods";
-import { useEffect, useState } from "react";
-import { getCategoryList } from "@/api/category";
+import { useEffect } from "react";
+import { useAppSelector, useComputedSelector } from "@/hooks/store";
+import { UploadForm } from "@/components";
 
 interface ModalForm {
   modalType: "edit" | "add";
@@ -39,9 +35,12 @@ export const EditModal: React.FC<ModalForm> = ({
   onCancel,
 }) => {
   const [form] = Form.useForm();
-  const [typeOptions, setTypeOptions] = useState<
-    { label: string; value: number }[]
-  >([]);
+  const userInfo = useAppSelector((store) => store.base.userInfo);
+  const categoryList = useComputedSelector(
+    (state) => state.goods.categoryList,
+    // 过滤掉父级分类，商品只能绑定二级分类
+    (categoryList) => categoryList.filter((item) => item.typeParentId),
+  );
 
   const normFile = (e: any) => {
     if (Array.isArray(e)) {
@@ -51,22 +50,13 @@ export const EditModal: React.FC<ModalForm> = ({
   };
 
   useEffect(() => {
-    const fetchTypes = async () => {
-      const { data } = await getCategoryList();
-      setTypeOptions(
-        data.map((item) => ({ label: item.typeName, value: item.id })),
-      );
-    };
-    fetchTypes();
-  }, []);
-
-  useEffect(() => {
     if (open && modalForm) {
       form.setFieldsValue({
         ...modalForm,
         goodsImgs: modalForm.goodsImgs?.map((url, index) => ({
           uid: index,
-          name: "image",
+          // 根据地址取文件名
+          name: url.split("/").pop(),
           status: "done",
           url,
         })),
@@ -74,24 +64,16 @@ export const EditModal: React.FC<ModalForm> = ({
     }
   }, [open, modalForm]);
 
-  const handleRemoveFile = async (files: UploadFile<any>) => {
-    try {
-      await deleteFile({ filePath: files.response.data.filename });
-      message.success("删除成功");
-    } catch (error) {
-      message.error("删除失败");
-      return false;
-    }
-  };
-
   const handleConfirm = async () => {
     try {
       await form.validateFields();
       const values = form.getFieldsValue(true);
       onOK({
+        goodsUser: userInfo.userName,
+        goodsUserId: userInfo.userId,
         ...values,
         goodsImgs: values.goodsImgs.map(
-          (file: any) => file?.response?.data.path || file.url,
+          (file: any) => file?.response?.data.path ?? file.url,
         ),
       });
     } catch (error) {
@@ -99,12 +81,11 @@ export const EditModal: React.FC<ModalForm> = ({
     }
   };
 
-  const fileList = Form.useWatch("goodsImgs", form);
-
   return (
     <Modal
       open={open}
       styles={{ body: { height: 400, overflowY: "auto" } }}
+      width={700}
       title={titleConfig[modalType]}
       okText="保存"
       afterClose={() => {
@@ -115,8 +96,8 @@ export const EditModal: React.FC<ModalForm> = ({
     >
       <Form
         form={form}
-        wrapperCol={{ span: 20 }}
-        layout="vertical"
+        wrapperCol={{ span: 18 }}
+        labelCol={{ span: 6 }}
         initialValues={{}}
       >
         <Row>
@@ -135,22 +116,46 @@ export const EditModal: React.FC<ModalForm> = ({
           </Col>
           <Col span={12}>
             <Form.Item
-              name="goodsPrice"
-              label="单价"
-              rules={[{ required: true, message: "商品单价必填" }]}
+              name="goodsCostPrice"
+              label="成本价"
+              rules={[{ required: true, message: "成本价必填" }]}
             >
-              <InputNumber placeholder="请输入单价" />
+              <InputNumber placeholder="请输入成本价" />
             </Form.Item>
           </Col>
         </Row>
         <Row>
           <Col span={12}>
             <Form.Item
-              name="goodsType"
+              name="goodsPrice"
+              label="当前售价"
+              rules={[{ required: true, message: "商品单价必填" }]}
+            >
+              <InputNumber placeholder="请输入单价" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="goodsMarkPrice"
+              label="市场价"
+              rules={[{ required: true, message: "商品市场价必填" }]}
+            >
+              <InputNumber placeholder="请输入市场价" />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={12}>
+            <Form.Item
+              name="goodsTypeId"
               label="类型"
               rules={[{ required: true, message: "商品类型必填" }]}
             >
-              <Select placeholder="请选择类型" options={typeOptions} />
+              <Select
+                placeholder="请选择类型"
+                fieldNames={{ label: "typeName", value: "id" }}
+                options={categoryList}
+              />
             </Form.Item>
           </Col>
           <Col span={12}>
@@ -163,35 +168,40 @@ export const EditModal: React.FC<ModalForm> = ({
             </Form.Item>
           </Col>
         </Row>
-        <Form.Item name="goodsOnSale" valuePropName="checked" label="是否上架">
-          <Switch />
-        </Form.Item>
-
-        <Form.Item
-          name="goodsImgs"
-          valuePropName="fileList"
-          label="商品图片"
-          rules={[{ required: true, message: "商品图片必填", type: "array" }]}
-          getValueFromEvent={normFile}
-        >
-          <Upload
-            name="files"
-            action={`${process.env.BASE_URL}files/upload`}
-            headers={{
-              Authorization: `Bearer ${window.localStorage.rawStorage.getItem(
-                "token",
-              )}`,
-            }}
-            multiple
-            onRemove={handleRemoveFile}
-            listType="picture-card"
-          >
-            {fileList?.length === 3 ? null : <FileImageOutlined />}
-          </Upload>
-        </Form.Item>
-        <Form.Item name="goodsDesc" wrapperCol={{ span: 22 }} label="描述">
-          <Input.TextArea placeholder="请输入描述" />
-        </Form.Item>
+        <Row>
+          <Col span={12}>
+            <Form.Item
+              name="goodsOnSale"
+              valuePropName="checked"
+              label="是否上架"
+            >
+              <Switch />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <Form.Item
+              labelCol={{ span: 3 }}
+              name="goodsImgs"
+              valuePropName="fileList"
+              label="商品图片"
+              rules={[
+                { required: true, message: "商品图片必填", type: "array" },
+              ]}
+              getValueFromEvent={normFile}
+            >
+              <UploadForm multiple maxCount={3} />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={12}>
+            <Form.Item name="goodsDesc" wrapperCol={{ span: 22 }} label="描述">
+              <Input.TextArea placeholder="请输入描述" />
+            </Form.Item>
+          </Col>
+        </Row>
       </Form>
     </Modal>
   );

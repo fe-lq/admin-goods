@@ -4,7 +4,7 @@ http.defaults.baseURL = process.env.BASE_URL;
 
 export const getGoodsList = postRequest<
   Goods[],
-  Pick<Goods, "goodsName" | "goodsOnSale"> & { goodsType?: number }
+  Pick<Goods, "goodsName" | "goodsOnSale">
 >("/goods/getList");
 export const createGoods = postRequest<unknown, Partial<Goods>>(
   "/goods/create",

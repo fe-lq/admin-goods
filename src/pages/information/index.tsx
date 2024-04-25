@@ -13,7 +13,7 @@ import {
 import type { ColumnsType } from "antd/es/table";
 import "./style.less";
 import { EditModal } from "./components/edit-modal";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   createGoods,
   deleteGoods,
@@ -22,11 +22,12 @@ import {
 } from "@/api/goods";
 import { FormGoods, Goods } from "@/types/goods";
 import { getCategoryList } from "@/api/category";
+import { useAppDispatch, useComputedSelector } from "@/hooks/store";
 
 type FieldType = {
   goodsName?: string;
   goodsOnSale?: boolean;
-  goodsType?: number;
+  goodsTypeId?: number;
 };
 
 type EditModalType = React.ComponentProps<typeof EditModal>;
@@ -34,12 +35,16 @@ type EditModalType = React.ComponentProps<typeof EditModal>;
 const GoodsInformation: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [data, setData] = useState<Goods[]>([]);
-  const [categoryOptions, setCategoryOptions] = useState<
-    { label: string; value: number }[]
-  >([]);
   const [modalForm, setModalForm] = useState<FormGoods>();
   const [form] = Form.useForm();
   const [modalType, setModalType] = useState<EditModalType["modalType"]>("add");
+  const dispatch = useAppDispatch();
+
+  const categoryList = useComputedSelector(
+    (state) => state.goods.categoryList,
+    // 过滤掉父级分类，商品只能绑定二级分类
+    (categoryList) => categoryList.filter((item) => item.typeParentId),
+  );
 
   const fetchData = async (params?: Goods) => {
     const { data } = await getGoodsList(params);
@@ -48,9 +53,7 @@ const GoodsInformation: React.FC = () => {
 
   const fetchCategories = async () => {
     const { data } = await getCategoryList();
-    setCategoryOptions(
-      data.map((item) => ({ label: item.typeName, value: item.id })),
-    );
+    dispatch({ type: "goods/setTypeList", payload: data });
   };
 
   useEffect(() => {
@@ -58,13 +61,7 @@ const GoodsInformation: React.FC = () => {
     fetchData();
   }, []);
 
-  const renderType = useCallback(
-    (typeId: number) => {
-      return categoryOptions.find((item) => item.value === typeId)?.label;
-    },
-    [categoryOptions],
-  );
-
+  // 保存
   const handleSave = async (values: FormGoods) => {
     try {
       if (modalType === "add") {
@@ -80,14 +77,15 @@ const GoodsInformation: React.FC = () => {
     }
   };
 
-  const handleSearch = () => {
-    const values = form.getFieldsValue();
-    fetchData(values);
-  };
-
-  const handleResetSearch = () => {
-    form.resetFields();
-    fetchData();
+  // 查询，重置
+  const handleSearch = (type: "search" | "reset") => {
+    if (type === "search") {
+      const values = form.getFieldsValue();
+      fetchData(values);
+    } else {
+      form.resetFields();
+      fetchData();
+    }
   };
 
   const handleOpenModal = (
@@ -108,7 +106,6 @@ const GoodsInformation: React.FC = () => {
       title: "确认删除",
       content: "是否确认删除该分类",
       onOk: async () => {
-        // 删除操作
         try {
           await deleteGoods({ id });
           fetchData();
@@ -143,8 +140,7 @@ const GoodsInformation: React.FC = () => {
     },
     {
       title: "类型",
-      dataIndex: "goodsType",
-      render: (goodsType: number) => renderType(goodsType),
+      dataIndex: "goodsTypeName",
     },
     {
       title: "已售数量",
@@ -187,12 +183,13 @@ const GoodsInformation: React.FC = () => {
         autoComplete="off"
       >
         <Form.Item<FieldType> label="名称" name="goodsName">
-          <Input placeholder="请输入花名" />
+          <Input placeholder="请输入花名" allowClear />
         </Form.Item>
 
         <Form.Item<FieldType> label="状态" name="goodsOnSale">
           <Select
             placeholder="请选择上线状态"
+            allowClear
             options={[
               {
                 label: "已上架",
@@ -205,16 +202,21 @@ const GoodsInformation: React.FC = () => {
             ]}
           />
         </Form.Item>
-        <Form.Item<FieldType> label="类型" name="goodsType">
-          <Select placeholder="请选择类型" options={categoryOptions} />
+        <Form.Item<FieldType> label="类型" name="goodsTypeId">
+          <Select
+            placeholder="请选择类型"
+            allowClear
+            fieldNames={{ label: "typeName", value: "id" }}
+            options={categoryList}
+          />
         </Form.Item>
 
         <Form.Item>
           <Space>
-            <Button type="primary" onClick={handleSearch}>
+            <Button type="primary" onClick={() => handleSearch("search")}>
               查询
             </Button>
-            <Button onClick={handleResetSearch}>重置</Button>
+            <Button onClick={() => handleSearch("reset")}>重置</Button>
           </Space>
         </Form.Item>
         <Form.Item className="add-btn">

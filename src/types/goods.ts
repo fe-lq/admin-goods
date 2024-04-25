@@ -7,6 +7,7 @@ export interface Goods {
   goodsOnSale: boolean;
   goodsDesc?: string;
   goodsIsDel?: boolean;
+  goodsTypeId: number;
 }
 
 export type FormGoods = Partial<Goods> & { id?: number };

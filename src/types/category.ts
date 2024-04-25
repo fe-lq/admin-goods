@@ -1,8 +1,19 @@
 export interface Category {
   id: number;
-  typeCode: string;
   typeName: string;
-  typeMemo?: string;
+  typeEnable: string;
+  typeParentId?: string;
+  typeParentName?: string;
+  typeImg?: string;
+  children: Category[];
 }
 
-export type FormCategory = Omit<Category, "id"> & { id?: number };
+export type FormCategory = Omit<Category, "id"> & {
+  id?: number;
+  typeImgs: any;
+};
+
+export type FilterParams = {
+  typeName?: string;
+  typeEnable?: boolean;
+};

@@ -1,5 +1,15 @@
 import { ContentCard } from "@/components";
-import { Button, Form, Input, Modal, Space, Table, message } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  Modal,
+  Select,
+  Space,
+  Table,
+  Tag,
+  message,
+} from "antd";
 import { EditModal } from "./components/edit-modal";
 import { useEffect, useState } from "react";
 import { ColumnsType } from "antd/es/table";
@@ -10,12 +20,8 @@ import {
   getCategoryList,
   updateCategory,
 } from "@/api/category";
-import { Category, FormCategory } from "@/types/category";
-
-type FieldType = {
-  typeCode?: string;
-  typeName?: string;
-};
+import { Category, FormCategory, FilterParams } from "@/types/category";
+import { useAppDispatch } from "@/hooks/store";
 
 type EditModalType = React.ComponentProps<typeof EditModal>;
 
@@ -23,25 +29,28 @@ const GoodsCategory: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [data, setData] = useState<Category[]>([]);
   const [modalForm, setModalForm] = useState<FormCategory>();
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<FilterParams>();
   const [modalType, setModalType] = useState<EditModalType["modalType"]>("add");
+  const dispatch = useAppDispatch();
 
-  const fetchData = async (params?: Category) => {
+  const fetchData = async (params?: FilterParams) => {
     const { data } = await getCategoryList(params);
     setData(data);
+
+    dispatch({ type: "goods/setTypeList", payload: data });
   };
   useEffect(() => {
     fetchData();
   }, []);
 
-  const handleSave = async (values: FormCategory) => {
+  const handleSave = async (values: Category) => {
     try {
       if (modalType === "add") {
         await addCategory(values);
       } else {
         await updateCategory(values);
       }
-
+      message.success("保存成功");
       fetchData();
       setOpen(false);
     } catch (error: any) {
@@ -59,48 +68,66 @@ const GoodsCategory: React.FC = () => {
     fetchData();
   };
 
-  const handleOpenModal = (
-    modalType: EditModalType["modalType"],
-    report?: Category,
-  ) => {
-    if (modalType === "edit") {
-      setModalForm(report);
+  const handleOpenModal = (report?: Category) => {
+    if (report) {
+      setModalForm({
+        ...report,
+        typeImgs: [
+          {
+            uid: 1,
+            // 根据地址取文件名
+            name: report.typeImg?.split("/").pop(),
+            status: "done",
+            url: report.typeImg,
+          },
+        ],
+      });
+      setModalType("edit");
     } else {
       setModalForm(undefined);
+      setModalType("add");
     }
-    setModalType(modalType);
     setOpen(true);
   };
 
-  const handleDelete = async (id: number) => {
+  const fetchDeleteType = async (category: Category) => {
+    try {
+      await deleteCategory({ id: category.id });
+      message.success("删除成功");
+      fetchData();
+    } catch (error: any) {
+      message.error(error.message);
+    }
+  };
+
+  const handleDelete = async (category: Category) => {
     Modal.confirm({
-      title: "确认删除",
+      title: "提示",
       content: "是否确认删除该分类",
-      onOk: async () => {
-        // 删除操作
-        try {
-          await deleteCategory({ id });
-          fetchData();
-          message.success("删除成功");
-        } catch (error: any) {
-          message.error(error.message);
-        }
+      onOk: () => {
+        fetchDeleteType(category);
       },
     });
   };
 
   const columns: ColumnsType<Category> = [
     {
-      title: "分类代码",
-      dataIndex: "typeCode",
+      title: "父级分类",
+      dataIndex: "typeParentName",
     },
     {
       title: "分类名称",
       dataIndex: "typeName",
     },
     {
-      title: "备注",
-      dataIndex: "typeMemo",
+      title: "状态",
+      dataIndex: "typeEnable",
+      render: (typeEnable) =>
+        typeEnable ? (
+          <Tag color="success">启用</Tag>
+        ) : (
+          <Tag color="error">禁用</Tag>
+        ),
     },
     {
       title: "操作",
@@ -109,11 +136,11 @@ const GoodsCategory: React.FC = () => {
           <Button
             size="small"
             type="primary"
-            onClick={() => handleOpenModal("edit", report)}
+            onClick={() => handleOpenModal(report)}
           >
             编辑
           </Button>
-          <Button size="small" danger onClick={() => handleDelete(report.id)}>
+          <Button size="small" danger onClick={() => handleDelete(report)}>
             删除
           </Button>
         </Space>
@@ -130,11 +157,18 @@ const GoodsCategory: React.FC = () => {
         form={form}
         autoComplete="off"
       >
-        <Form.Item<FieldType> label="分类代码" name="typeCode">
-          <Input placeholder="请输入类别代码" />
+        <Form.Item label="分类名称" name="typeName">
+          <Input placeholder="请输入类别名称" allowClear />
         </Form.Item>
-        <Form.Item<FieldType> label="分类名称" name="typeName">
-          <Input placeholder="请输入类别名称" />
+        <Form.Item label="分类状态" name="typeEnable">
+          <Select
+            placeholder="请选择分类状态"
+            allowClear
+            options={[
+              { label: "启用", value: true },
+              { label: "禁用", value: false },
+            ]}
+          />
         </Form.Item>
 
         <Form.Item>
@@ -146,12 +180,17 @@ const GoodsCategory: React.FC = () => {
           </Space>
         </Form.Item>
         <Form.Item className="add-btn">
-          <Button type="primary" onClick={() => handleOpenModal("add")}>
+          <Button type="primary" onClick={() => handleOpenModal()}>
             新增
           </Button>
         </Form.Item>
       </Form>
-      <Table columns={columns} rowKey="id" dataSource={data} />
+      <Table
+        columns={columns}
+        expandable={{ showExpandColumn: false }}
+        rowKey="id"
+        dataSource={data}
+      />
       <EditModal
         open={open}
         modalType={modalType}
