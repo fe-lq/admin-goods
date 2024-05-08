@@ -9,6 +9,7 @@ import {
   Table,
   Tag,
   message,
+  Image,
 } from "antd";
 import { EditModal } from "./components/edit-modal";
 import { useEffect, useState } from "react";
@@ -112,12 +113,19 @@ const GoodsCategory: React.FC = () => {
 
   const columns: ColumnsType<Category> = [
     {
-      title: "父级分类",
-      dataIndex: "typeParentName",
-    },
-    {
       title: "分类名称",
       dataIndex: "typeName",
+    },
+    {
+      title: "分类图标",
+      dataIndex: "typeImg",
+      render: (typeImg) => (
+        <Image src={typeImg} width={25} height={25} preview={false} />
+      ),
+    },
+    {
+      title: "父级分类",
+      dataIndex: "typeParentName",
     },
     {
       title: "状态",

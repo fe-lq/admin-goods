@@ -13,7 +13,7 @@ import {
 import type { ColumnsType } from "antd/es/table";
 import "./style.less";
 import { EditModal } from "./components/edit-modal";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   createGoods,
   deleteGoods,
@@ -117,61 +117,66 @@ const GoodsInformation: React.FC = () => {
     });
   };
 
-  const columns: ColumnsType<Goods> = [
-    {
-      title: "名称",
-      dataIndex: "goodsName",
-    },
-    {
-      title: "单价",
-      dataIndex: "goodsPrice",
-    },
-    {
-      title: "状态",
-      dataIndex: "goodsOnSale",
-      render: (_, record) => (
-        <Tag
-          color={record.goodsOnSale ? "success" : "error"}
-          key={record.goodsName}
-        >
-          {record.goodsOnSale ? "已上架" : "已下架"}
-        </Tag>
-      ),
-    },
-    {
-      title: "类型",
-      dataIndex: "goodsTypeName",
-    },
-    {
-      title: "已售数量",
-      dataIndex: "goodsSellCount",
-    },
-    {
-      title: "总量",
-      dataIndex: "goodsAmount",
-    },
-    {
-      title: "描述",
-      dataIndex: "goodsDesc",
-    },
-    {
-      title: "操作",
-      render: (_, report) => (
-        <Space>
-          <Button
-            size="small"
-            type="primary"
-            onClick={() => handleOpenModal("edit", report)}
+  const columns: ColumnsType<Goods> = useMemo(
+    () => [
+      {
+        title: "名称",
+        dataIndex: "goodsName",
+      },
+      {
+        title: "单价",
+        dataIndex: "goodsPrice",
+      },
+      {
+        title: "状态",
+        dataIndex: "goodsOnSale",
+        render: (_, record) => (
+          <Tag
+            color={record.goodsOnSale ? "success" : "error"}
+            key={record.goodsName}
           >
-            编辑
-          </Button>
-          <Button size="small" danger onClick={() => handleDelete(report.id)}>
-            删除
-          </Button>
-        </Space>
-      ),
-    },
-  ];
+            {record.goodsOnSale ? "已上架" : "已下架"}
+          </Tag>
+        ),
+      },
+      {
+        title: "类型",
+        dataIndex: "goodsTypeId",
+        render: (goodsTypeId) =>
+          categoryList.find((item) => item.id === goodsTypeId)?.typeName,
+      },
+      {
+        title: "已售数量",
+        dataIndex: "goodsSellCount",
+      },
+      {
+        title: "总量",
+        dataIndex: "goodsAmount",
+      },
+      {
+        title: "描述",
+        dataIndex: "goodsDesc",
+      },
+      {
+        title: "操作",
+        render: (_, report) => (
+          <Space>
+            <Button
+              size="small"
+              type="primary"
+              onClick={() => handleOpenModal("edit", report)}
+            >
+              编辑
+            </Button>
+            <Button size="small" danger onClick={() => handleDelete(report.id)}>
+              删除
+            </Button>
+          </Space>
+        ),
+      },
+    ],
+    [categoryList],
+  );
 
   return (
     <ContentCard>

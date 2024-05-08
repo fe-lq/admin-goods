@@ -27,6 +27,10 @@ const titleConfig = {
   edit: "编辑商品",
 };
 
+const initialValues = {
+  goodsOnSale: true,
+};
+
 export const EditModal: React.FC<ModalForm> = ({
   modalType,
   open,
@@ -98,7 +102,7 @@ export const EditModal: React.FC<ModalForm> = ({
         form={form}
         wrapperCol={{ span: 18 }}
         labelCol={{ span: 6 }}
-        initialValues={{}}
+        initialValues={initialValues}
       >
         <Row>
           <Col span={12}>

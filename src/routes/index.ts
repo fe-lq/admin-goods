@@ -9,14 +9,14 @@ interface RouteType {
 
 export const routerConfig: RouteType[] = [
   {
-    name: "商品信息",
-    path: "/information",
-    component: lazy(() => import("@/pages/information")),
-  },
-  {
     name: "商品分类",
     path: "/category",
     component: lazy(() => import("@/pages/category")),
+  },
+  {
+    name: "商品信息",
+    path: "/information",
+    component: lazy(() => import("@/pages/information")),
   },
 ];
 
